@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ad Reward</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+</head>
+<body>
+    <!-- Connect Button for Metamask -->
+    <button id="connect">Connect Wallet</button>
+
+    <!-- Ad Container (Initially Hidden) -->
+    <div id="ad-container" style="display: none;">
+        <img id="ad-thumbnail" src="" alt="Ad Thumbnail" style="cursor: pointer; width: 300px;" />
+        <video id="ad-video" style="display: none; width: 300px;" controls></video>
+    </div>
+
+    <!-- Reward Message -->
+    <div id="reward-message" style="display: none;">
+        <p>You have been rewarded!</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
