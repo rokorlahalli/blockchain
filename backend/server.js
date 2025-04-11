@@ -11,6 +11,7 @@ const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
 const PRIVATE_KEY = process.env.METAMASK_PRIVATE_KEY;
 const RPC_URL = process.env.RPC_URL;
 
+
 // 🛑 Ensure you have the private key
 if (!PRIVATE_KEY) {
     console.error("❌ ERROR: Metamask Private Key is missing in .env");
@@ -26,6 +27,10 @@ const wallet = new ethers.Wallet(PRIVATE_KEY, provider);
 // ✅ Load contract ABI
 const contractABI = require('./contractABI.json');
 const rewardToken = new ethers.Contract(CONTRACT_ADDRESS, contractABI, wallet);
+
+const NFT_CONTRACT_ADDRESS = process.env.NFT_CONTRACT_ADDRESS;
+const nftContractABI = require('./nftContractABI.json');
+const nftContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, nftContractABI, wallet);
 
 // Middleware to parse JSON
 app.use(express.json());
@@ -111,6 +116,69 @@ app.get('/totalSupply', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// NFT Endpoints
+// NFT Mint Endpoint
+app.post('/mint-nft', async (req, res) => {
+    const { userAddress } = req.body;
+
+    try {
+        // Optional token URI: Use a placeholder if none is provided
+        const tokenURI = "https://example.com/empty-metadata";  // Placeholder URI
+        const tx = await nftContract.mint(userAddress, tokenURI); // Mint the NFT with the placeholder URI
+        await tx.wait();
+        
+        res.json({ 
+            success: true, 
+            message: `NFT minted for ${userAddress}`,
+            transactionHash: tx.hash
+        });
+    } catch (err) {
+        console.error("Error minting NFT:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get User's NFTs Endpoint
+app.get('/nfts/:address', async (req, res) => {
+    const userAddress = req.params.address;
+
+    try {
+        const balance = await nftContract.balanceOf(userAddress);
+        const tokenIds = [];
+
+        for (let i = 0; i < balance; i++) {
+            const tokenId = await nftContract.tokenOfOwnerByIndex(userAddress, i);
+            tokenIds.push(tokenId.toString());
+        }
+
+        res.json({ 
+            success: true, 
+            balance: balance.toString(),
+            tokenIds
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get Metadata of a Specific NFT
+app.get('/nft-metadata/:tokenId', async (req, res) => {
+    const tokenId = req.params.tokenId;
+
+    try {
+        // Since we are using a placeholder, the tokenURI will be the same for all NFTs
+        const tokenURI = "https://example.com/empty-metadata";  // Placeholder URI
+        res.json({ 
+            success: true, 
+            tokenURI
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
 
 // ✅ **Start the server**
 app.listen(port, '0.0.0.0', () => {

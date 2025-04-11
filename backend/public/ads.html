@@ -102,6 +102,9 @@
           <li class="nav-item">
             <a class="nav-link" href="blockchair.html">Blockchair Data</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="nft.html">NFT's</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -123,16 +126,6 @@
         </div>
       </div>
 
-      <!-- Image Ad 1 -->
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card shadow-sm">
-          <img src="images/ad1.jpg" class="card-img-top" alt="Ad 1" onclick="onImageClick()">
-          <div class="card-body">
-            <h5 class="card-title text-center">Click Image Ad 1</h5>
-          </div>
-        </div>
-      </div>
-
       <!-- Video Ad 2 -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="card shadow-sm">
@@ -146,10 +139,33 @@
         </div>
       </div>
 
+      <!-- Video Ad 3 -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card shadow-sm">
+          <div class="video-container" id="video3">
+            <iframe id="iframe3" src="https://www.youtube.com/embed/DoqXZCXt5k4?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title text-center">Watch Ad 3</h5>
+            <button class="btn btn-reward w-100" onclick="onVideoComplete('video3')">Claim Tokens</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Ad 1 -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card shadow-sm">
+          <img src="images/ad2.jpg" class="card-img-top" alt="Ad 1" onclick="onImageClick()">
+          <div class="card-body">
+            <h5 class="card-title text-center">Click Image Ad 1</h5>
+          </div>
+        </div>
+      </div>
+
       <!-- Image Ad 2 -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
         <div class="card shadow-sm">
-          <img src="images/ad2.jpg" class="card-img-top" alt="Ad 2" onclick="onImageClick()">
+          <img src="images/ad3.jpg" class="card-img-top" alt="Ad 2" onclick="onImageClick()">
           <div class="card-body">
             <h5 class="card-title text-center">Click Image Ad 2</h5>
           </div>
@@ -160,57 +176,67 @@
 
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    const serverUrl = 'http://localhost:3000'; // Change to your server URL
+    const serverUrl = 'http://localhost:3000'; // Change if needed
     const userWalletAddress = localStorage.getItem('userWalletAddress');
+    const nftRewardThreshold = 3;
 
     if (!userWalletAddress) {
       alert("Wallet not connected. Please connect your wallet first.");
-      window.location.href = 'index.html'; // Redirect to the wallet connect page if not connected
+      window.location.href = 'index.html';
     }
 
-    // YouTube Player Setup
     let players = {};
+    const watchedVideosKey = 'watchedVideos';
+    let watchedVideos = parseInt(localStorage.getItem(watchedVideosKey)) || 0;
+
+    const rewardedVideos = JSON.parse(localStorage.getItem('rewardedVideos') || '{}');
 
     function onYouTubeIframeAPIReady() {
-      // Create player instances for each video ad
       players['video1'] = new YT.Player('iframe1', {
-        events: {
-          'onStateChange': onPlayerStateChange
-        }
+        events: { 'onStateChange': onPlayerStateChange }
       });
 
       players['video2'] = new YT.Player('iframe2', {
-        events: {
-          'onStateChange': onPlayerStateChange
-        }
+        events: { 'onStateChange': onPlayerStateChange }
+      });
+
+      players['video3'] = new YT.Player('iframe3', {
+        events: { 'onStateChange': onPlayerStateChange }
       });
     }
 
-    // Handle state change of the video player (detect video completion)
     function onPlayerStateChange(event) {
       if (event.data == YT.PlayerState.ENDED) {
-        const videoId = event.target.getIframe().id;
-        onVideoComplete(videoId);
+        const videoIframeId = event.target.getIframe().id;
+        onVideoComplete(videoIframeId);
       }
     }
 
-    // Reward the user after watching the video
     async function onVideoComplete(videoId) {
       if (userWalletAddress) {
-        const rewardAmount = 10; // Reward 10 tokens for watching the video
+        if (rewardedVideos[videoId]) {
+          alert("You’ve already been rewarded for this video.");
+          return;
+        }
+
+        const rewardAmount = 10;
 
         try {
           const response = await fetch(`${serverUrl}/reward`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userAddress: userWalletAddress, amount: rewardAmount }),
           });
 
           const data = await response.json();
           if (data.success) {
-            alert(data.message);
+            watchedVideos++;
+            localStorage.setItem(watchedVideosKey, watchedVideos);
+
+            rewardedVideos[videoId] = true;
+            localStorage.setItem('rewardedVideos', JSON.stringify(rewardedVideos));
+
+            alert(`${data.message}\nYou've watched ${watchedVideos}/${nftRewardThreshold} videos for NFT reward.`);
           } else {
             alert("Error rewarding user: " + data.error);
           }
@@ -223,17 +249,14 @@
       }
     }
 
-    // Reward the user for clicking an image
     async function onImageClick() {
       if (userWalletAddress) {
-        const rewardAmount = 5; // Reward 5 tokens for clicking the image
+        const rewardAmount = 5;
 
         try {
           const response = await fetch(`${serverUrl}/reward`, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userAddress: userWalletAddress, amount: rewardAmount }),
           });
 
