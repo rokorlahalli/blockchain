@@ -5,74 +5,266 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Advertisement Gallery</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      background: linear-gradient(135deg, #6a4c93, #feb47b);
-      height: 100vh;
-      color: #fff;
+    :root {
+      --primary-color: #6a4c93;
+      --secondary-color: #feb47b;
+      --accent-color: #ff7e5f;
+      --dark-color: #2a2a3a;
+      --light-color: #f8f9fa;
+      --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     }
+    
+    body {
+      background: var(--gradient);
+      min-height: 100vh;
+      color: var(--light-color);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    
+    .nav-link {
+      position: relative;
+      padding: 8px 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover {
+      color: var(--secondary-color) !important;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 15px;
+      width: 0;
+      height: 2px;
+      background: var(--secondary-color);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: calc(100% - 30px);
+    }
+    
     .card {
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.95);
       border-radius: 15px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-    .card-img-top {
-      border-radius: 10px;
-      transition: transform 0.3s ease;
-    }
-    .card-img-top:hover {
-      transform: scale(1.05);
-    }
-    .card h5 {
-      color: #6a4c93;
-    }
-    .btn-reward {
-      background-color: #feb47b;
-      color: #6a4c93;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
       border: none;
-      border-radius: 5px;
+      overflow: hidden;
     }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card-img-top {
+      border-radius: 10px 10px 0 0;
+      transition: transform 0.5s ease;
+    }
+    
+    .card-img-top:hover {
+      transform: scale(1.03);
+    }
+    
+    .card-body {
+      padding: 1.5rem;
+    }
+    
+    .card-title {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    
+    .btn-reward {
+      background-color: var(--secondary-color);
+      color: var(--dark-color);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
     .btn-reward:hover {
-      background-color: #f7a500;
+      background-color: var(--accent-color);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      color: white;
     }
+    
+    .btn-reward:disabled {
+      background-color: #cccccc;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .btn-reward.btn-success {
+      background-color: #28a745;
+      color: white;
+    }
+    
     .container {
       padding-top: 30px;
+      padding-bottom: 60px;
     }
+    
+    h2 {
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+      display: inline-block;
+      padding-bottom: 10px;
+    }
+    
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--secondary-color);
+      border-radius: 3px;
+    }
+    
     .row {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 25px;
     }
+    
     .video-container {
       position: relative;
       padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
       max-width: 100%;
-      border-radius: 15px;
+      border-radius: 15px 15px 0 0;
+      background: #000;
     }
+    
     .video-container iframe {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      border-radius: 15px;
+      border-radius: 15px 15px 0 0;
     }
+    
+    .footer {
+      padding: 20px 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--light-color);
+      background-color: rgba(0, 0, 0, 0.3);
+      width: 100%;
+      backdrop-filter: blur(5px);
+      margin-top: auto;
+    }
+    
+    .footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .footer a:hover {
+      color: var(--accent-color);
+    }
+    
+    /* Progress indicator */
+    .progress-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto 30px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 3px;
+    }
+    
+    .progress-bar {
+      height: 20px;
+      border-radius: 8px;
+      background: var(--gradient);
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .row {
+        gap: 15px;
+      }
+      
+      .card {
+        margin-bottom: 15px;
+      }
+      
+      h2 {
+        font-size: 1.8rem;
+      }
+    }
+    
+    /* Animation for cards */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .col-12.col-sm-6.col-md-4.col-lg-3 {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    .col-12.col-sm-6.col-md-4.col-lg-3:nth-child(1) { animation-delay: 0.1s; }
+    .col-12.col-sm-6.col-md-4.col-lg-3:nth-child(2) { animation-delay: 0.2s; }
+    .col-12.col-sm-6.col-md-4.col-lg-3:nth-child(3) { animation-delay: 0.3s; }
+    .col-12.col-sm-6.col-md-4.col-lg-3:nth-child(4) { animation-delay: 0.4s; }
+    .col-12.col-sm-6.col-md-4.col-lg-3:nth-child(5) { animation-delay: 0.5s; }
+    .col-12.col-sm-6.col-md-4.col-lg-3:nth-child(6) { animation-delay: 0.6s; }
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Ad Gallery</a>
+      <a class="navbar-brand" href="#"><i class="fas fa-ad me-2"></i>Ad Gallery</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="ads.html">Ads Gallery</a></li>
-          <li class="nav-item"><a class="nav-link" href="blockchair.html">Blockchair Data</a></li>
-          <li class="nav-item"><a class="nav-link" href="nft.html">NFT's</a></li>
+          <li class="nav-item"><a class="nav-link active" href="ads.html"><i class="fas fa-play-circle me-1"></i> Ads Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="blockchair.html"><i class="fas fa-database me-1"></i> Blockchair Data</a></li>
+          <li class="nav-item"><a class="nav-link" href="nft.html"><i class="fas fa-image me-1"></i> NFT's</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-sign-out-alt me-1"></i> Sign Out</a></li>
         </ul>
       </div>
     </div>
@@ -80,42 +272,106 @@
 
   <div class="container py-5">
     <h2 class="mb-4 text-center">Advertisement Gallery</h2>
+    
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar" style="width: 0%">
+        0/3 videos watched
+      </div>
+    </div>
+    
     <div class="row g-4">
       <!-- Video Ad 1 -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm h-100">
           <div class="video-container" id="video1">
             <iframe id="iframe1" src="https://www.youtube.com/embed/m9coOXt5nuw?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
           </div>
-          <div class="card-body">
-            <h5 class="card-title text-center">Watch Ad 1</h5>
-            <button id="claimBtn1" class="btn btn-reward w-100" onclick="onVideoComplete('video1')" disabled>Claim Tokens</button>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Oreo</h5>
+            <p class="text-muted small mb-3">Watch full video to earn tokens</p>
+            <button id="claimBtn1" class="btn btn-reward w-100 mt-auto" onclick="onVideoComplete('video1')" disabled>
+              <i class="fas fa-lock me-2"></i>Claim 10 Tokens
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Video Ad 2 -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm h-100">
           <div class="video-container" id="video2">
             <iframe id="iframe2" src="https://www.youtube.com/embed/NdKN0067ECQ?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
           </div>
-          <div class="card-body">
-            <h5 class="card-title text-center">Watch Ad 2</h5>
-            <button id="claimBtn2" class="btn btn-reward w-100" onclick="onVideoComplete('video2')" disabled>Claim Tokens</button>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Stylish Countdown</h5>
+            <p class="text-muted small mb-3">Watch full video to earn tokens</p>
+            <button id="claimBtn2" class="btn btn-reward w-100 mt-auto" onclick="onVideoComplete('video2')" disabled>
+              <i class="fas fa-lock me-2"></i>Claim 10 Tokens
+            </button>
           </div>
         </div>
       </div>
 
       <!-- Video Ad 3 -->
       <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm h-100">
           <div class="video-container" id="video3">
             <iframe id="iframe3" src="https://www.youtube.com/embed/DoqXZCXt5k4?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
           </div>
-          <div class="card-body">
-            <h5 class="card-title text-center">Watch Ad 3</h5>
-            <button id="claimBtn3" class="btn btn-reward w-100" onclick="onVideoComplete('video3')" disabled>Claim Tokens</button>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Pringles</h5>
+            <p class="text-muted small mb-3">Watch full video to earn tokens</p>
+            <button id="claimBtn3" class="btn btn-reward w-100 mt-auto" onclick="onVideoComplete('video3')" disabled>
+              <i class="fas fa-lock me-2"></i>Claim 10 Tokens
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Video Ad 4 -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card shadow-sm h-100">
+          <div class="video-container" id="video4">
+            <iframe id="iframe4" src="https://www.youtube.com/embed/x1dJa6XC2tA?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">Coca Cola</h5>
+            <p class="text-muted small mb-3">Watch full video to earn tokens</p>
+            <button id="claimBtn4" class="btn btn-reward w-100 mt-auto" onclick="onVideoComplete('video4')" disabled>
+              <i class="fas fa-lock me-2"></i>Claim 10 Tokens
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Ad 5 -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card shadow-sm h-100">
+          <div class="video-container" id="video5">
+            <iframe id="iframe5" src="https://www.youtube.com/embed/W_MfNQ9cv9M?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">MANGO</h5>
+            <p class="text-muted small mb-3">Watch full video to earn tokens</p>
+            <button id="claimBtn5" class="btn btn-reward w-100 mt-auto" onclick="onVideoComplete('video5')" disabled>
+              <i class="fas fa-lock me-2"></i>Claim 10 Tokens
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Ad 6 -->
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card shadow-sm h-100">
+          <div class="video-container" id="video6">
+            <iframe id="iframe6" src="https://www.youtube.com/embed/GLBBo2Jihvs" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">KFC</h5>
+            <p class="text-muted small mb-3">Watch full video to earn tokens</p>
+            <button id="claimBtn6" class="btn btn-reward w-100 mt-auto" onclick="onVideoComplete('video6')" disabled>
+              <i class="fas fa-lock me-2"></i>Claim 10 Tokens
+            </button>
           </div>
         </div>
       </div>
@@ -137,10 +393,16 @@
     let watchedVideos = parseInt(localStorage.getItem(watchedVideosKey)) || 0;
     const rewardedVideos = JSON.parse(localStorage.getItem('rewardedVideos') || '{}');
 
+    // Update progress bar on load
+    updateProgressBar();
+
     function onYouTubeIframeAPIReady() {
       players['video1'] = new YT.Player('iframe1', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video1') } });
       players['video2'] = new YT.Player('iframe2', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video2') } });
       players['video3'] = new YT.Player('iframe3', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video3') } });
+      players['video4'] = new YT.Player('iframe4', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video4') } });
+      players['video5'] = new YT.Player('iframe5', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video5') } });
+      players['video6'] = new YT.Player('iframe6', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video6') } });
     }
 
     function onPlayerStateChange(event, videoId) {
@@ -150,8 +412,22 @@
         const btn = document.getElementById(btnId);
         if (btn) {
           btn.disabled = false;
+          btn.classList.remove('btn-reward');
           btn.classList.add('btn-success');
-          btn.innerText = "Claim Tokens";
+          btn.innerHTML = `<i class="fas fa-check-circle me-2"></i>Claim 10 Tokens`;
+        }
+      }
+    }
+
+    function updateProgressBar() {
+      const progressPercentage = (watchedVideos / nftRewardThreshold) * 100;
+      const progressBar = document.getElementById('progressBar');
+      if (progressBar) {
+        progressBar.style.width = `${progressPercentage}%`;
+        progressBar.textContent = `${watchedVideos}/${nftRewardThreshold} videos watched`;
+        
+        if (watchedVideos >= nftRewardThreshold) {
+          progressBar.innerHTML = `<i class="fas fa-trophy me-2"></i> NFT Unlocked!`;
         }
       }
     }
@@ -163,7 +439,7 @@
       }
 
       if (rewardedVideos[videoId]) {
-        alert("You’ve already been rewarded for this video.");
+        alert("You've already been rewarded for this video.");
         return;
       }
 
@@ -181,32 +457,101 @@
           rewardedVideos[videoId] = true;
           localStorage.setItem('rewardedVideos', JSON.stringify(rewardedVideos));
 
-          alert(`${data.message}\nYou've watched ${watchedVideos}/${nftRewardThreshold} videos for NFT reward.`);
-
-          if (watchedVideos >= nftRewardThreshold) {
-            alert(`🎉 You've unlocked the NFT! Go to the NFT section to claim.`);
-            localStorage.setItem('nftUnlocked', 'true');
-            localStorage.removeItem(watchedVideosKey);
-            localStorage.removeItem('rewardedVideos');
-          }
-
-          // Optional: Disable the button after claim
+          // Update UI
+          updateProgressBar();
+          
           const btnId = `claimBtn${videoId.slice(-1)}`;
           const btn = document.getElementById(btnId);
           if (btn) {
             btn.disabled = true;
-            btn.innerText = "Claimed";
+            btn.innerHTML = `<i class="fas fa-check-double me-2"></i>Claimed`;
+          }
+
+          // Show success notification
+          showNotification(`+10 Tokens! You've watched ${watchedVideos}/${nftRewardThreshold} videos for NFT reward.`);
+
+          if (watchedVideos >= nftRewardThreshold) {
+            showNotification(`🎉 Congratulations! You've unlocked the NFT! Visit the NFT section to claim your reward.`, 'success');
+            localStorage.setItem('nftUnlocked', 'true');
+            localStorage.removeItem(watchedVideosKey);
+            localStorage.removeItem('rewardedVideos');
           }
         } else {
-          alert("Error rewarding user: " + data.error);
+          showNotification(`Error: ${data.error}`, 'error');
         }
       } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while rewarding the user.');
+        showNotification('An error occurred while processing your reward.', 'error');
       }
+    }
+
+    function showNotification(message, type = 'success') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <div class="notification-content">
+          <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+          ${message}
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 300);
+      }, 5000);
     }
   </script>
 
+  <style>
+    .notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #2a2a3a;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      max-width: 350px;
+    }
+    
+    .notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .notification.success {
+      border-left: 4px solid #28a745;
+    }
+    
+    .notification.error {
+      border-left: 4px solid #dc3545;
+    }
+    
+    .notification-content {
+      display: flex;
+      align-items: center;
+    }
+  </style>
+
   <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Footer -->
+  <footer class="footer">
+    © 2025 <a href="#" target="_blank">AdReward</a> (Rohit Korlahalli). Built with <i class="fas fa-heart" style="color: #ff4757;"></i> for Web3 users.
+  </footer>
+  
 </body>
 </html>

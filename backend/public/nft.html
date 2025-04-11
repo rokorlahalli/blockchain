@@ -1,4 +1,3 @@
-<!-- nft.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,81 +5,385 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Claim Your NFT</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      background: linear-gradient(135deg, #6a4c93, #8a2be2);
-      color: #fff;
-      min-height: 100vh;
+    :root {
+      --primary-color: #6a4c93;
+      --secondary-color: #feb47b;
+      --accent-color: #8a2be2;
+      --dark-color: #1a1a2e;
+      --light-color: #f8f9fa;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --gradient: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     }
+    
+    body {
+      background: var(--gradient);
+      color: var(--light-color);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-attachment: fixed;
+    }
+    
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    
+    .nav-link {
+      position: relative;
+      padding: 8px 15px;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover {
+      color: var(--secondary-color) !important;
+    }
+    
+    .nav-link.active {
+      color: var(--secondary-color) !important;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 15px;
+      width: 0;
+      height: 2px;
+      background: var(--secondary-color);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after, .nav-link.active::after {
+      width: calc(100% - 30px);
+    }
+    
     .container {
       padding-top: 30px;
+      max-width: 800px;
     }
+    
+    h1 {
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+      display: inline-block;
+      padding-bottom: 10px;
+    }
+    
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 3px;
+      background: var(--secondary-color);
+      border-radius: 3px;
+    }
+    
     .btn-claim {
-      background-color: #feb47b;
-      color: #6a4c93;
-      border-radius: 5px;
+      background: var(--secondary-color);
+      color: var(--dark-color);
       border: none;
+      border-radius: 8px;
+      padding: 12px 30px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      text-transform: uppercase;
+      font-size: 1.1rem;
     }
+    
     .btn-claim:hover {
-      background-color: #f7a500;
+      background: var(--accent-color);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      color: white;
     }
-    .poster-preview img {
-      max-width: 300px;
-      margin-top: 20px;
+    
+    .btn-claim:disabled {
+      background: #6c757d;
+      transform: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.9);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      background-color: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .nft-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
       border-radius: 15px;
+      padding: 30px;
+      margin-top: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.5s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    .nft-card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .nft-image {
+      max-width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      transition: transform 0.5s ease;
+      margin-bottom: 20px;
+    }
+    
+    .nft-image:hover {
+      transform: scale(1.03) rotate(-1deg);
+    }
+    
+    .nft-title {
+      color: var(--secondary-color);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .nft-description {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 20px;
+    }
+    
+    .status-message {
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-weight: 500;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .status-success {
+      background: rgba(40, 167, 69, 0.2);
+      border-left: 4px solid var(--success-color);
+    }
+    
+    .status-warning {
+      background: rgba(255, 193, 7, 0.2);
+      border-left: 4px solid var(--warning-color);
+    }
+    
+    .status-danger {
+      background: rgba(220, 53, 69, 0.2);
+      border-left: 4px solid var(--danger-color);
+    }
+    
+    .status-processing {
+      background: rgba(13, 110, 253, 0.2);
+      border-left: 4px solid #0d6efd;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .pulse {
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .badge-unlocked {
+      background: var(--secondary-color);
+      color: var(--dark-color);
+      font-weight: 700;
+      padding: 8px 15px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    
+    .etherscan-link {
+      color: var(--secondary-color);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    
+    .etherscan-link:hover {
+      color: white;
+      text-decoration: underline;
+    }
+    
+    .footer {
+      padding: 20px 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--light-color);
+      background-color: rgba(0, 0, 0, 0.3);
+      width: 100%;
+      margin-top: 50px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .footer a {
+      color: var(--secondary-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .footer a:hover {
+      color: var(--accent-color);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .btn-claim {
+        padding: 10px 20px;
+        font-size: 1rem;
+      }
+      
+      .container {
+        padding-left: 15px;
+        padding-right: 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">NFT's</a>
+      <a class="navbar-brand" href="#"><i class="fas fa-crown me-2"></i>NFT Reward</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="ads.html">Ads Gallery</a></li>
-          <li class="nav-item"><a class="nav-link" href="blockchair.html">Blockchair Data</a></li>
-          <li class="nav-item"><a class="nav-link active" href="nft.html">NFT's</a></li>
+          <li class="nav-item"><a class="nav-link" href="ads.html"><i class="fas fa-play-circle me-1"></i> Ads</a></li>
+          <li class="nav-item"><a class="nav-link" href="blockchair.html"><i class="fas fa-database me-1"></i> Blockchain</a></li>
+          <li class="nav-item"><a class="nav-link active" href="nft.html"><i class="fas fa-gem me-1"></i> NFT</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-sign-out-alt me-1"></i> Sign Out</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <div class="container text-center">
-    <h1 class="my-4">🎬 Claim Your Exclusive NFT Movie Poster</h1>
-    <input id="walletAddress" class="form-control my-3" type="text" placeholder="Enter your wallet address" />
-    <button id="claimNFTBtn" class="btn btn-claim" disabled>Claim NFT</button>
-    <div id="result" class="mt-4"></div>
-    <div class="poster-preview" id="posterPreview"></div>
+  <div class="container text-center py-5">
+    <h1 class="my-4"><i class="fas fa-trophy me-3"></i>Claim Your Exclusive Premier League NFT Badge</h1>
+    
+    <div id="statusMessage"></div>
+    
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <input id="walletAddress" class="form-control my-3" type="text" placeholder="Enter your MetaMask wallet address" />
+        <button id="claimNFTBtn" class="btn btn-claim pulse" disabled>
+          <i class="fas fa-gem me-2"></i>Claim NFT
+        </button>
+      </div>
+    </div>
+    
+    <div class="nft-card" id="nftCard">
+      <!-- NFT content will be loaded here -->
+    </div>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const nftUnlocked = localStorage.getItem('nftUnlocked') === 'true';
       const claimBtn = document.getElementById("claimNFTBtn");
-      const resultDiv = document.getElementById("result");
+      const statusMessage = document.getElementById("statusMessage");
+      const nftCard = document.getElementById("nftCard");
 
       if (nftUnlocked) {
         claimBtn.disabled = false;
-        resultDiv.innerHTML = `<p class="text-success">🎉 You've unlocked the NFT! Enter your wallet to claim.</p>`;
+        statusMessage.innerHTML = `
+          <div class="status-message status-success">
+            <i class="fas fa-check-circle me-2"></i>
+            <span class="badge-unlocked">NFT UNLOCKED!</span>
+            <p>You've earned this exclusive Premier League NFT badge. Enter your wallet address to claim it!</p>
+          </div>
+        `;
       } else {
-        resultDiv.innerHTML = `<p class="text-warning">🎬 Watch 3 ads to unlock the NFT.</p>`;
+        claimBtn.classList.remove('pulse');
+        statusMessage.innerHTML = `
+          <div class="status-message status-warning">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <p>Watch 3 video ads to unlock this exclusive NFT reward!</p>
+            <a href="ads.html" class="btn btn-sm btn-claim mt-2">
+              <i class="fas fa-play me-1"></i> Watch Ads Now
+            </a>
+          </div>
+        `;
       }
     });
 
     document.getElementById("claimNFTBtn").addEventListener("click", async () => {
       const wallet = document.getElementById("walletAddress").value.trim();
-      const resultDiv = document.getElementById("result");
-      const posterDiv = document.getElementById("posterPreview");
+      const statusMessage = document.getElementById("statusMessage");
+      const nftCard = document.getElementById("nftCard");
+      const claimBtn = document.getElementById("claimNFTBtn");
 
       if (!wallet) {
-        resultDiv.innerHTML = "<p class='text-warning'>Please enter a wallet address.</p>";
+        statusMessage.innerHTML = `
+          <div class="status-message status-warning">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Please enter a valid Ethereum wallet address
+          </div>
+        `;
         return;
       }
 
-      resultDiv.innerHTML = "⏳ Minting NFT... Please wait.";
+      // Basic Ethereum address validation
+      if (!/^0x[a-fA-F0-9]{40}$/.test(wallet)) {
+        statusMessage.innerHTML = `
+          <div class="status-message status-warning">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Please enter a valid Ethereum wallet address (should start with 0x and be 42 characters long)
+          </div>
+        `;
+        return;
+      }
+
+      claimBtn.disabled = true;
+      claimBtn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i>Minting...`;
+      
+      statusMessage.innerHTML = `
+        <div class="status-message status-processing">
+          <i class="fas fa-cog fa-spin me-2"></i>
+          Minting your NFT... This may take a moment
+        </div>
+      `;
 
       try {
         const response = await fetch('/mint-nft', {
@@ -92,26 +395,60 @@
         const data = await response.json();
 
         if (data.success) {
-          resultDiv.innerHTML = `<p class="text-success">✅ NFT minted! <a href="https://sepolia.etherscan.io/tx/${data.transactionHash}" target="_blank">View on Etherscan</a></p>`;
+          statusMessage.innerHTML = `
+            <div class="status-message status-success">
+              <i class="fas fa-check-circle me-2"></i>
+              Success! Your NFT has been minted.
+              <div class="mt-2">
+                <a href="https://sepolia.etherscan.io/tx/${data.transactionHash}" target="_blank" class="etherscan-link">
+                  <i class="fas fa-external-link-alt me-1"></i> View on Etherscan
+                </a>
+              </div>
+            </div>
+          `;
 
           if (data.metadata) {
-            posterDiv.innerHTML = `
-              <h4>${data.metadata.name}</h4>
-              <p>${data.metadata.description}</p>
-              <img src="${data.metadata.image}" alt="NFT Poster" class="img-fluid rounded"/>
+            nftCard.innerHTML = `
+              <img src="${data.metadata.image}" alt="NFT Poster" class="nft-image"/>
+              <h3 class="nft-title">${data.metadata.name}</h3>
+              <p class="nft-description">${data.metadata.description}</p>
+              <p class="text-muted">This NFT has been transferred to your wallet.</p>
             `;
+            nftCard.classList.add('show');
           }
 
           localStorage.removeItem('nftUnlocked');
           localStorage.setItem('watchedVideos', 0);
           localStorage.setItem('rewardedVideos', '{}');
+          
+          claimBtn.innerHTML = `<i class="fas fa-check me-2"></i>NFT Claimed`;
         } else {
-          resultDiv.innerHTML = `<p class="text-danger">❌ ${data.error || 'Minting failed.'}</p>`;
+          statusMessage.innerHTML = `
+            <div class="status-message status-danger">
+              <i class="fas fa-times-circle me-2"></i>
+              ${data.error || 'NFT minting failed. Please try again.'}
+            </div>
+          `;
+          claimBtn.disabled = false;
+          claimBtn.innerHTML = `<i class="fas fa-gem me-2"></i>Claim NFT`;
         }
       } catch (err) {
-        resultDiv.innerHTML = `<p class="text-danger">❌ Error: ${err.message}</p>`;
+        statusMessage.innerHTML = `
+          <div class="status-message status-danger">
+            <i class="fas fa-times-circle me-2"></i>
+            Error: ${err.message || 'Failed to connect to server'}
+          </div>
+        `;
+        claimBtn.disabled = false;
+        claimBtn.innerHTML = `<i class="fas fa-gem me-2"></i>Claim NFT`;
       }
     });
   </script>
+
+  <footer class="footer">
+    © 2025 <a href="#" target="_blank">AdReward</a> (Rohit Korlahalli). Built with <i class="fas fa-heart" style="color: #ff4757;"></i> for Web3 users.
+  </footer>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

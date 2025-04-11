@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Claim Your NFT</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background: linear-gradient(135deg, #6a4c93, #8a2be2);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      flex: 1;
+      padding-top: 30px;
+    }
+    .btn-claim {
+      background-color: #feb47b;
+      color: #6a4c93;
+      border-radius: 5px;
+      border: none;
+    }
+    .btn-claim:hover {
+      background-color: #f7a500;
+    }
+    .poster-preview img {
+      max-width: 300px;
+      margin-top: 20px;
+      border-radius: 15px;
+    }
+    .footer {
+      padding: 15px 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #fdfdfd;
+      background-color: rgba(0, 0, 0, 0.2);
+      width: 100%;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">NFT's</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="ads.html">Ads Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="blockchair.html">Blockchair Data</a></li>
+          <li class="nav-item"><a class="nav-link active" href="nft.html">NFT's</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container text-center">
+    <h1 class="my-4">Claim your Exclusive Premier League Team NFT!!!</h1>
+    <input id="walletAddress" class="form-control my-3" type="text" placeholder="Enter your wallet address" />
+    <button id="claimNFTBtn" class="btn btn-claim" disabled>Claim NFT</button>
+    <div id="result" class="mt-4"></div>
+    <div class="poster-preview" id="posterPreview"></div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const nftUnlocked = localStorage.getItem('nftUnlocked') === 'true';
+      const watchedVideos = parseInt(localStorage.getItem('watchedVideos')) || 0;  // Retrieve watched video count
+      console.log("NFT Unlocked:", nftUnlocked);
+      console.log("Watched Videos:", watchedVideos);
+
+      const claimBtn = document.getElementById("claimNFTBtn");
+      const resultDiv = document.getElementById("result");
+
+      if (watchedVideos >= 3) {
+        claimBtn.disabled = false;
+        resultDiv.innerHTML = '<p class="text-success">🎉 You\'ve unlocked the NFT! Enter your wallet to claim.</p>';
+      } else if (watchedVideos < 3) {
+        claimBtn.disabled = true;
+        resultDiv.innerHTML = '<p class="text-warning">🎬 Watch 3 ads to unlock the NFT.</p>';
+      } else {
+        resultDiv.innerHTML = '<p class="text-warning">🎬 Watch ads to unlock the NFT.</p>';
+      }
+
+      claimBtn.addEventListener("click", async () => {
+        const walletAddress = document.getElementById('walletAddress').value.trim();
+        if (!walletAddress) {
+          alert("Please enter your wallet address!");
+          return;
+        }
+
+        try {
+          const response = await fetch('http://localhost:3000/claimNFT', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ walletAddress })
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            resultDiv.innerHTML = '<p class="text-success">🎉 NFT claimed successfully!</p>';
+          } else {
+            resultDiv.innerHTML = `<p class="text-danger">❌ ${data.message}</p>`;
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          resultDiv.innerHTML = '<p class="text-danger">❌ Error claiming NFT.</p>';
+        }
+      });
+    });
+  </script>
+
+  <!-- Footer -->
+  <footer class="footer">
+    © 2025 AdReward (Rohit Korlahalli). Built with ❤️ for Web3 users.
+  </footer>
+</body>
+</html>
