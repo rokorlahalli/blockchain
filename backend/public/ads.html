@@ -11,56 +11,46 @@
       height: 100vh;
       color: #fff;
     }
-
     .card {
       background-color: rgba(255, 255, 255, 0.9);
       border-radius: 15px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     }
-
     .card-img-top {
       border-radius: 10px;
       transition: transform 0.3s ease;
     }
-
     .card-img-top:hover {
       transform: scale(1.05);
     }
-
     .card h5 {
       color: #6a4c93;
     }
-
     .btn-reward {
       background-color: #feb47b;
       color: #6a4c93;
       border: none;
       border-radius: 5px;
     }
-
     .btn-reward:hover {
       background-color: #f7a500;
     }
-
     .container {
       padding-top: 30px;
     }
-
     .row {
       display: flex;
       justify-content: center;
       gap: 20px;
     }
-
     .video-container {
       position: relative;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
       max-width: 100%;
       border-radius: 15px;
     }
-
     .video-container iframe {
       position: absolute;
       top: 0;
@@ -69,42 +59,20 @@
       height: 100%;
       border-radius: 15px;
     }
-
-    .api-data-section {
-      margin-top: 50px;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 20px;
-      border-radius: 15px;
-    }
-
-    .api-data-section h4 {
-      color: #6a4c93;
-    }
-
-    .api-data-section p {
-      color: #333;
-    }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="#">Ad Gallery</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="ads.html">Ads Gallery</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="blockchair.html">Blockchair Data</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="nft.html">NFT's</a>
-          </li>
+          <li class="nav-item"><a class="nav-link active" href="ads.html">Ads Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="blockchair.html">Blockchair Data</a></li>
+          <li class="nav-item"><a class="nav-link" href="nft.html">NFT's</a></li>
         </ul>
       </div>
     </div>
@@ -121,7 +89,7 @@
           </div>
           <div class="card-body">
             <h5 class="card-title text-center">Watch Ad 1</h5>
-            <button class="btn btn-reward w-100" onclick="onVideoComplete('video1')">Claim Tokens</button>
+            <button id="claimBtn1" class="btn btn-reward w-100" onclick="onVideoComplete('video1')" disabled>Claim Tokens</button>
           </div>
         </div>
       </div>
@@ -134,7 +102,7 @@
           </div>
           <div class="card-body">
             <h5 class="card-title text-center">Watch Ad 2</h5>
-            <button class="btn btn-reward w-100" onclick="onVideoComplete('video2')">Claim Tokens</button>
+            <button id="claimBtn2" class="btn btn-reward w-100" onclick="onVideoComplete('video2')" disabled>Claim Tokens</button>
           </div>
         </div>
       </div>
@@ -147,36 +115,15 @@
           </div>
           <div class="card-body">
             <h5 class="card-title text-center">Watch Ad 3</h5>
-            <button class="btn btn-reward w-100" onclick="onVideoComplete('video3')">Claim Tokens</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Image Ad 1 -->
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card shadow-sm">
-          <img src="images/ad2.jpg" class="card-img-top" alt="Ad 1" onclick="onImageClick()">
-          <div class="card-body">
-            <h5 class="card-title text-center">Click Image Ad 1</h5>
-          </div>
-        </div>
-      </div>
-
-      <!-- Image Ad 2 -->
-      <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card shadow-sm">
-          <img src="images/ad3.jpg" class="card-img-top" alt="Ad 2" onclick="onImageClick()">
-          <div class="card-body">
-            <h5 class="card-title text-center">Click Image Ad 2</h5>
+            <button id="claimBtn3" class="btn btn-reward w-100" onclick="onVideoComplete('video3')" disabled>Claim Tokens</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    const serverUrl = 'http://localhost:3000'; // Change if needed
+    const serverUrl = 'http://localhost:3000';
     const userWalletAddress = localStorage.getItem('userWalletAddress');
     const nftRewardThreshold = 3;
 
@@ -188,92 +135,78 @@
     let players = {};
     const watchedVideosKey = 'watchedVideos';
     let watchedVideos = parseInt(localStorage.getItem(watchedVideosKey)) || 0;
-
     const rewardedVideos = JSON.parse(localStorage.getItem('rewardedVideos') || '{}');
 
     function onYouTubeIframeAPIReady() {
-      players['video1'] = new YT.Player('iframe1', {
-        events: { 'onStateChange': onPlayerStateChange }
-      });
-
-      players['video2'] = new YT.Player('iframe2', {
-        events: { 'onStateChange': onPlayerStateChange }
-      });
-
-      players['video3'] = new YT.Player('iframe3', {
-        events: { 'onStateChange': onPlayerStateChange }
-      });
+      players['video1'] = new YT.Player('iframe1', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video1') } });
+      players['video2'] = new YT.Player('iframe2', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video2') } });
+      players['video3'] = new YT.Player('iframe3', { events: { 'onStateChange': (e) => onPlayerStateChange(e, 'video3') } });
     }
 
-    function onPlayerStateChange(event) {
-      if (event.data == YT.PlayerState.ENDED) {
-        const videoIframeId = event.target.getIframe().id;
-        onVideoComplete(videoIframeId);
+    function onPlayerStateChange(event, videoId) {
+      if (event.data === YT.PlayerState.ENDED) {
+        // Enable claim button
+        const btnId = `claimBtn${videoId.slice(-1)}`;
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.add('btn-success');
+          btn.innerText = "Claim Tokens";
+        }
       }
     }
 
     async function onVideoComplete(videoId) {
-      if (userWalletAddress) {
-        if (rewardedVideos[videoId]) {
-          alert("You’ve already been rewarded for this video.");
-          return;
-        }
-
-        const rewardAmount = 10;
-
-        try {
-          const response = await fetch(`${serverUrl}/reward`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userAddress: userWalletAddress, amount: rewardAmount }),
-          });
-
-          const data = await response.json();
-          if (data.success) {
-            watchedVideos++;
-            localStorage.setItem(watchedVideosKey, watchedVideos);
-
-            rewardedVideos[videoId] = true;
-            localStorage.setItem('rewardedVideos', JSON.stringify(rewardedVideos));
-
-            alert(`${data.message}\nYou've watched ${watchedVideos}/${nftRewardThreshold} videos for NFT reward.`);
-          } else {
-            alert("Error rewarding user: " + data.error);
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('An error occurred while rewarding the user.');
-        }
-      } else {
+      if (!userWalletAddress) {
         alert("Wallet not connected.");
+        return;
       }
-    }
 
-    async function onImageClick() {
-      if (userWalletAddress) {
-        const rewardAmount = 5;
+      if (rewardedVideos[videoId]) {
+        alert("You’ve already been rewarded for this video.");
+        return;
+      }
 
-        try {
-          const response = await fetch(`${serverUrl}/reward`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userAddress: userWalletAddress, amount: rewardAmount }),
-          });
+      try {
+        const response = await fetch(`${serverUrl}/reward`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userAddress: userWalletAddress, amount: 10 }),
+        });
 
-          const data = await response.json();
-          if (data.success) {
-            alert(data.message);
-          } else {
-            alert("Error rewarding user: " + data.error);
+        const data = await response.json();
+        if (data.success) {
+          watchedVideos++;
+          localStorage.setItem(watchedVideosKey, watchedVideos);
+          rewardedVideos[videoId] = true;
+          localStorage.setItem('rewardedVideos', JSON.stringify(rewardedVideos));
+
+          alert(`${data.message}\nYou've watched ${watchedVideos}/${nftRewardThreshold} videos for NFT reward.`);
+
+          if (watchedVideos >= nftRewardThreshold) {
+            alert(`🎉 You've unlocked the NFT! Go to the NFT section to claim.`);
+            localStorage.setItem('nftUnlocked', 'true');
+            localStorage.removeItem(watchedVideosKey);
+            localStorage.removeItem('rewardedVideos');
           }
-        } catch (error) {
-          console.error('Error:', error);
-          alert('An error occurred while rewarding the user.');
+
+          // Optional: Disable the button after claim
+          const btnId = `claimBtn${videoId.slice(-1)}`;
+          const btn = document.getElementById(btnId);
+          if (btn) {
+            btn.disabled = true;
+            btn.innerText = "Claimed";
+          }
+        } else {
+          alert("Error rewarding user: " + data.error);
         }
-      } else {
-        alert("Wallet not connected.");
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while rewarding the user.');
       }
     }
   </script>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>

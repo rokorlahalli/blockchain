@@ -1,9 +1,10 @@
+<!-- nft.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My NFT Collection</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Claim Your NFT</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
@@ -11,145 +12,104 @@
       color: #fff;
       min-height: 100vh;
     }
-
     .container {
       padding-top: 30px;
     }
-
-    .nft-card {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      transition: transform 0.3s ease;
-      overflow: hidden;
-    }
-
-    .nft-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .nft-image {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-    }
-
-    .nft-details {
-      padding: 15px;
-    }
-
-    .nft-title {
-      color: #6a4c93;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    .nft-id {
-      color: #666;
-      font-size: 0.9rem;
-    }
-
-    .nav-link {
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .nav-link:hover, .nav-link.active {
-      color: #feb47b;
-    }
-
-    .progress-bar {
-      background-color: #feb47b;
-    }
-
     .btn-claim {
       background-color: #feb47b;
       color: #6a4c93;
       border-radius: 5px;
       border: none;
     }
-
     .btn-claim:hover {
       background-color: #f7a500;
+    }
+    .poster-preview img {
+      max-width: 300px;
+      margin-top: 20px;
+      border-radius: 15px;
     }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">NFT Collection</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <a class="navbar-brand" href="#">NFT's</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="ads.html">Ad Gallery</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="nft.html">My NFTs</a>
-          </li>
+          <li class="nav-item"><a class="nav-link" href="ads.html">Ads Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="blockchair.html">Blockchair Data</a></li>
+          <li class="nav-item"><a class="nav-link active" href="nft.html">NFT's</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <div class="container py-5">
-    <h2 class="mb-4 text-center">Your NFT Progress</h2>
-    <div class="progress">
-      <div id="nftProgress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-    </div>
-    <p id="progressText" class="text-center mt-3">Watch 3 videos to earn your NFT</p>
-
-    <div class="text-center mt-5">
-      <button id="claimNFTBtn" class="btn btn-claim" disabled>Claim NFT</button>
-    </div>
+  <div class="container text-center">
+    <h1 class="my-4">🎬 Claim Your Exclusive NFT Movie Poster</h1>
+    <input id="walletAddress" class="form-control my-3" type="text" placeholder="Enter your wallet address" />
+    <button id="claimNFTBtn" class="btn btn-claim" disabled>Claim NFT</button>
+    <div id="result" class="mt-4"></div>
+    <div class="poster-preview" id="posterPreview"></div>
   </div>
 
-  <!-- Axios for HTTP requests -->
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    const nftRewardThreshold = 3;
-    let watchedVideos = parseInt(localStorage.getItem('watchedVideos')) || 0;
+    document.addEventListener("DOMContentLoaded", () => {
+      const nftUnlocked = localStorage.getItem('nftUnlocked') === 'true';
+      const claimBtn = document.getElementById("claimNFTBtn");
+      const resultDiv = document.getElementById("result");
 
-    function updateNFTProgress() {
-      const progress = (watchedVideos / nftRewardThreshold) * 100;
-      document.getElementById('nftProgress').style.width = `${progress}%`;
-      document.getElementById('progressText').textContent = 
-        `Watch ${watchedVideos}/${nftRewardThreshold} ads to earn your next NFT`;
+      if (nftUnlocked) {
+        claimBtn.disabled = false;
+        resultDiv.innerHTML = `<p class="text-success">🎉 You've unlocked the NFT! Enter your wallet to claim.</p>`;
+      } else {
+        resultDiv.innerHTML = `<p class="text-warning">🎬 Watch 3 ads to unlock the NFT.</p>`;
+      }
+    });
 
-      document.getElementById('claimNFTBtn').disabled = watchedVideos < nftRewardThreshold;
-    }
+    document.getElementById("claimNFTBtn").addEventListener("click", async () => {
+      const wallet = document.getElementById("walletAddress").value.trim();
+      const resultDiv = document.getElementById("result");
+      const posterDiv = document.getElementById("posterPreview");
 
-    // Call update on load
-    updateNFTProgress();
-
-    // Claim NFT logic
-    document.getElementById('claimNFTBtn').addEventListener('click', async () => {
-      if (typeof window.ethereum === 'undefined') {
-        alert("Please install MetaMask!");
+      if (!wallet) {
+        resultDiv.innerHTML = "<p class='text-warning'>Please enter a wallet address.</p>";
         return;
       }
 
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      const userAddress = accounts[0];
+      resultDiv.innerHTML = "⏳ Minting NFT... Please wait.";
 
       try {
-        const response = await axios.post('http://localhost:3000/mint-nft', {
-          userAddress: userAddress
+        const response = await fetch('/mint-nft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userAddress: wallet })
         });
 
-        if (response.data.success) {
-          alert(`🎉 NFT minted successfully! Transaction: ${response.data.transactionHash}`);
-          watchedVideos = 0;
-          localStorage.setItem('watchedVideos', watchedVideos);
-          updateNFTProgress();
+        const data = await response.json();
+
+        if (data.success) {
+          resultDiv.innerHTML = `<p class="text-success">✅ NFT minted! <a href="https://sepolia.etherscan.io/tx/${data.transactionHash}" target="_blank">View on Etherscan</a></p>`;
+
+          if (data.metadata) {
+            posterDiv.innerHTML = `
+              <h4>${data.metadata.name}</h4>
+              <p>${data.metadata.description}</p>
+              <img src="${data.metadata.image}" alt="NFT Poster" class="img-fluid rounded"/>
+            `;
+          }
+
+          localStorage.removeItem('nftUnlocked');
+          localStorage.setItem('watchedVideos', 0);
+          localStorage.setItem('rewardedVideos', '{}');
         } else {
-          alert("Something went wrong while minting the NFT.");
+          resultDiv.innerHTML = `<p class="text-danger">❌ ${data.error || 'Minting failed.'}</p>`;
         }
-      } catch (error) {
-        console.error("Minting error:", error);
-        alert("Failed to mint NFT. Check the console for details.");
+      } catch (err) {
+        resultDiv.innerHTML = `<p class="text-danger">❌ Error: ${err.message}</p>`;
       }
     });
   </script>

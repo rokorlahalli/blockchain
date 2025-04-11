@@ -5,6 +5,7 @@ const app = express();
 const port = 3000;
 const path = require('path');
 const cors = require('cors');
+const fs = require('fs');
 
 // Load environment variables
 const CONTRACT_ADDRESS = process.env.CONTRACT_ADDRESS;
@@ -118,26 +119,40 @@ app.get('/totalSupply', async (req, res) => {
 });
 
 // NFT Endpoints
-// NFT Mint Endpoint
 app.post('/mint-nft', async (req, res) => {
     const { userAddress } = req.body;
-
+  
     try {
-        // Optional token URI: Use a placeholder if none is provided
-        const tokenURI = "https://example.com/empty-metadata";  // Placeholder URI
-        const tx = await nftContract.mint(userAddress, tokenURI); // Mint the NFT with the placeholder URI
-        await tx.wait();
-        
-        res.json({ 
-            success: true, 
-            message: `NFT minted for ${userAddress}`,
-            transactionHash: tx.hash
-        });
+      // List of CIDs pointing to metadata JSON files on IPFS via Pinata
+      const metadataCIDs = [
+        'bafkreid4et3sumfh6kau6mtsd7tgu7r7dqkccpedcz2kicprqvjl54xupq',
+        'bafkreiflec4uoau7cva4syz3omgwfnvlrqb4opvctdhblwik2jtez5jxsu',
+        'bafkreidlrznoqqndrlxrzxxkxszjkwlbpcoa3twkuy6cnxynm67eg5qaie',
+        'bafkreighopkm5ukbesip3n6d5phynnx5lz5bb4wrdvjr6s4yogwjkap5ye',
+        'bafkreieuqu7xfghoazmnyxd4le7qfkpml3fuduppqxqrllqfzqdhxfyjyy'
+      ];
+  
+      // Pick one CID randomly
+      const selectedCID = metadataCIDs[Math.floor(Math.random() * metadataCIDs.length)];
+  
+      // Construct tokenURI pointing to metadata JSON
+      const tokenURI = `https://gateway.pinata.cloud/ipfs/${selectedCID}`;
+  
+      // Call smart contract mint function
+      const tx = await nftContract.mint(userAddress, tokenURI);
+      await tx.wait();
+  
+      res.json({
+        success: true,
+        message: `NFT minted for ${userAddress}`,
+        transactionHash: tx.hash,
+        metadataURI: tokenURI
+      });
     } catch (err) {
-        console.error("Error minting NFT:", err);
-        res.status(500).json({ error: err.message });
+      console.error("Error minting NFT:", err);
+      res.status(500).json({ error: err.message });
     }
-});
+  });
 
 // Get User's NFTs Endpoint
 app.get('/nfts/:address', async (req, res) => {
